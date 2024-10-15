@@ -1,3 +1,4 @@
+apply(from = "${rootDir}/library.gradle")
 plugins {
     alias(libs.plugins.hiltAndroid)
     alias(libs.plugins.androidLibrary)
@@ -10,14 +11,6 @@ plugins {
 
 android {
     namespace = "com.ricknmorty.episodes"
-    compileSdk = 34
-
-    defaultConfig {
-        minSdk = 24
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-    }
 
     buildTypes {
         release {
@@ -27,13 +20,6 @@ android {
                 "proguard-rules.pro"
             )
         }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
     }
 
     buildFeatures {

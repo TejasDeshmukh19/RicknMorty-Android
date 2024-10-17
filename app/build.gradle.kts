@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.konan.properties.Properties
+import java.io.FileInputStream
+
 plugins {
   alias(libs.plugins.androidApplication)
   alias(libs.plugins.hiltAndroid)
@@ -25,13 +28,38 @@ android {
     }
   }
 
+  signingConfigs {
+    create("release") {
+      val keyStoreFile = file("$rootDir/keystore/keystore.properties")
+      if (keyStoreFile.exists()) {
+        val properties = Properties()
+        properties.load(FileInputStream(keyStoreFile))
+        storeFile = properties["keyStore"]?.let { file(it) }
+        storePassword = properties["storePassword"].toString()
+        keyPassword = properties["keyAlias"].toString()
+        keyAlias = properties["keyPassword"].toString()
+      } else {
+        storeFile = file("keystore.jks")
+        storePassword = System.getenv("RELEASE_KEYSTORE_PASSWORD")
+        keyPassword = System.getenv("RELEASE_KEYSTORE_KEY_ALIAS_PASSWORD")
+        keyAlias = System.getenv("RELEASE_KEYSTORE_KEY_ALIAS")
+      }
+    }
+  }
+
   buildTypes {
     release {
-      isMinifyEnabled = false
+      isMinifyEnabled = true
       proguardFiles(
         getDefaultProguardFile("proguard-android-optimize.txt"),
         "proguard-rules.pro"
       )
+      isDebuggable = true
+      signingConfig = signingConfigs.getByName("release")
+    }
+    getByName("debug") {
+      isDebuggable = true
+      applicationIdSuffix = ".debug"
     }
   }
   compileOptions {
@@ -48,6 +76,28 @@ android {
   packaging {
     resources {
       excludes += "/META-INF/{AL2.0,LGPL2.1}"
+    }
+  }
+  flavorDimensions += listOf("default")
+  productFlavors {
+    create("alpha") {
+      dimension = "default"
+      applicationId = "com.android.ricknmorty"
+      applicationIdSuffix = ".alpha"
+      signingConfig = signingConfigs.getByName("debug")
+    }
+
+    create("beta") {
+      dimension = "default"
+      applicationId = "com.android.ricknmorty"
+      applicationIdSuffix = ".beta"
+      signingConfig = signingConfigs.getByName("debug")
+    }
+
+    create("prod") {
+      dimension = "default"
+      applicationId = "com.android.ricknmorty"
+      signingConfig = signingConfigs.getByName("release")
     }
   }
 }

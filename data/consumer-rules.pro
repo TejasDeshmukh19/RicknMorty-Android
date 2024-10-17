@@ -1,0 +1,2 @@
+-keep class com.ricknmorty.data.ui_models.** { *; }
+-keep class com.ricknmorty.data.responses.** { *; }

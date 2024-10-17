@@ -1,0 +1,2 @@
+-keep class com.ricknmorty.characters.presentation.characters_listing.viewmodel.models.** { *; }
+-keep class com.ricknmorty.characters.presentation.character_details.viewmodel.models.** { *; }

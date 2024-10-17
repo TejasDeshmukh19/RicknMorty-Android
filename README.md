@@ -15,16 +15,18 @@ Demo application to learn different concepts in Android, some of them are listed
 
 # Screenshots
 
-![ScreenShot](https://github.com/TejasDeshmukh19/RicknMorty-Android/master/previews/characters_listing.png)
+![ScreenShot](https://github.com/TejasDeshmukh19/RicknMorty-Android/blob/master/previews/characters_listing.png)
 
-![ScreenShot](https://github.com/TejasDeshmukh19/RicknMorty-Android/master/previews/character_details.png)
+![ScreenShot](https://github.com/TejasDeshmukh19/RicknMorty-Android/blob/master/previews/character_details.png)
 
 # Architecture
 
-![Overview](https://github.com/TejasDeshmukh19/RicknMorty-Android/master/previews/mvi_architecture.png)
+![Overview](https://github.com/TejasDeshmukh19/RicknMorty-Android/blob/master/previews/mvi_architecture.png)
 
 # Resources
 
 ## The Rick and Morty API
 
-[Rick and Morty API](https://rickandmortyapi.com/) Rest apis.
+[Rick and Morty API](https://rickandmortyapi.com/) 
+
+Rest apis to fetch all the Characters, Episodes and Locations through REST api.

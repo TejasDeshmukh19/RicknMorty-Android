@@ -15,14 +15,12 @@ Demo application to learn different concepts in Android, some of them are listed
 
 # Screenshots
 
-<img src="https://github.com/TejasDeshmukh19/RicknMorty-Android/blob/master/previews/characters_listing.png" width="200" />
-
-<img src="https://github.com/TejasDeshmukh19/RicknMorty-Android/blob/master/previews/character_details.png" width="200" />
+<img src="https://github.com/TejasDeshmukh19/RicknMorty-Android/blob/master/previews/characters_listing.png" width="200"  alt="listing_screenshot"/> <img src="https://github.com/TejasDeshmukh19/RicknMorty-Android/blob/master/previews/character_details.png" width="200" alt="details_screenshot"/>
 
 
 # Architecture
 
-<img src="https://github.com/TejasDeshmukh19/RicknMorty-Android/blob/master/previews/mvi_architecture.png" width="200" />
+![Overview](https://github.com/TejasDeshmukh19/RicknMorty-Android/blob/master/previews/mvi_architecture.png)
 
 # Resources
 

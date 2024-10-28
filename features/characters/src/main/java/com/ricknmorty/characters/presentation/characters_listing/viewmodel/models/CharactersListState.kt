@@ -8,10 +8,8 @@ import com.ricknmorty.data.ui_models.CharacterUIModel
  */
 
 data class CharactersListState(
-    val nextPageIndex: Int = 1,
     var characters: List<CharacterUIModel> = emptyList(),
     val isLoading: Boolean = false,
-    val allPagesLoaded: Boolean = false,
     val selectedViewType: ViewType = ViewType.GRID,
     val isNoInternetConnectivity: Boolean = false
 ) : IViewModel.State

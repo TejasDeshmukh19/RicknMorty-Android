@@ -4,7 +4,7 @@ package com.ricknmorty.data.responses
  * Created by Tejas Deshmukh on 27/09/24.
  */
 
-data class CharacterDto(
+data class CharactersPageDto(
     val info: PaginationInfo?,
     val results: List<Character>?
 )

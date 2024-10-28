@@ -16,8 +16,7 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
     }
@@ -29,6 +28,14 @@ android {
 
 dependencies {
     implementation(libs.hilt.android)
+
+    testImplementation(libs.kotestRunnerJunit5)
+    testImplementation(libs.kotestAssertionsCore)
+    testImplementation(libs.kotestProperty)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.kotlin.reflect)
+
     ksp(libs.dagger.hilt.compiler)
 
     implementation(project(":ui-resources"))

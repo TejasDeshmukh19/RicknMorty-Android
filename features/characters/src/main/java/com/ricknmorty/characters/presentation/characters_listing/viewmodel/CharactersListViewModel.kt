@@ -2,12 +2,12 @@ package com.ricknmorty.characters.presentation.characters_listing.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.helpers.base.qualifiers.IoDispatcher
-import com.helpers.base.qualifiers.MainDispatcher
 import com.helpers.base.viewmodel.BaseViewModel
-import com.helpers.network.ApiError
-import com.helpers.network.ApiException
-import com.helpers.network.Success
-import com.helpers.network.interceptors.NetworkInterceptor
+import com.helpers.network.NetworkError
+import com.helpers.network.ServerError
+import com.helpers.network.onFailure
+import com.helpers.network.onLoading
+import com.helpers.network.onSuccess
 import com.ricknmorty.characters.presentation.characters_listing.viewmodel.models.CharactersListEvents
 import com.ricknmorty.characters.presentation.characters_listing.viewmodel.models.CharactersListEvents.OnLoadNextPage
 import com.ricknmorty.characters.presentation.characters_listing.viewmodel.models.CharactersListEvents.OnToggleViewType
@@ -18,8 +18,6 @@ import com.ricknmorty.data.mappers.CharacterToCharacterUIModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.net.UnknownHostException
 import javax.inject.Inject
 
 /**
@@ -29,7 +27,6 @@ import javax.inject.Inject
 @HiltViewModel
 class CharactersListViewModel @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
     private val getAllCharactersUseCase: IGetAllCharactersUseCase,
     private val characterToCharacterUIModel: CharacterToCharacterUIModel
 ) : BaseViewModel<CharactersListState, CharactersListEvents, Nothing>() {
@@ -37,57 +34,61 @@ class CharactersListViewModel @Inject constructor(
     override val initialState: CharactersListState get() = CharactersListState()
 
     private var isLoadingNewPage: Boolean = false
+    private var pageIndex = 1
+    private var isAllPagesLoaded: Boolean = false
+
     override fun onEvent(event: CharactersListEvents) {
         when (event) {
             is OnLoadNextPage -> {
-                if (isLoadingNewPage) {
+                if (isLoadingNewPage || isAllPagesLoaded) {
                     return
                 }
 
-                isLoadingNewPage = true
-                render(state.value.copy(isLoading = true, isNoInternetConnectivity = false))
-
                 viewModelScope.launch(ioDispatcher) {
-                    when (val response =
-                        getAllCharactersUseCase.invoke(state.value.nextPageIndex)) {
-                        is Success -> {
-                            withContext(mainDispatcher) {
-                                render(
-                                    state.value.copy(
-                                        characters = state.value.characters + ((response.data.results
-                                            ?: emptyList()).mapNotNull {
-                                            characterToCharacterUIModel.map(it)
-                                        }),
-                                        isLoading = false,
-                                        nextPageIndex = state.value.nextPageIndex + 1,
-                                        allPagesLoaded = response.data.results.isNullOrEmpty()
-                                    )
+                    getAllCharactersUseCase.invoke(pageIndex).collect { response ->
+                        response.onLoading {
+                            isLoadingNewPage = true
+                            render(
+                                state.value.copy(
+                                    isLoading = it,
+                                    isNoInternetConnectivity = false
                                 )
+                            )
+                        }.onSuccess {
+                            if (pageIndex < (it.info?.count ?: 0)) {
+                                pageIndex++
+                            } else {
+                                isAllPagesLoaded = true
                             }
-                            isLoadingNewPage = false
-                        }
 
-                        is ApiError -> {
-                            isLoadingNewPage = false
-                            withContext(mainDispatcher) {
-                                render(
-                                    state.value.copy(
-                                        isLoading = false, allPagesLoaded = true
-                                    )
+                            render(
+                                state.value.copy(
+                                    characters = state.value.characters + ((it.results
+                                        ?: emptyList()).mapNotNull {
+                                        characterToCharacterUIModel.map(it)
+                                    }),
+                                    isLoading = false
                                 )
-                            }
-                        }
+                            )
+                            isLoadingNewPage = false
+                        }.onFailure {
+                            isLoadingNewPage = false
+                            when (it) {
+                                is NetworkError -> {
+                                    render(
+                                        state.value.copy(
+                                            isLoading = false,
+                                            isNoInternetConnectivity = true
+                                        )
+                                    )
+                                }
 
-                        is ApiException -> {
-                            isLoadingNewPage = false
-                            if (response.exception is NetworkInterceptor.NoNetworkException ||
-                                response.exception is UnknownHostException
-                            ) {
-                                render(
-                                    state.value.copy(
-                                        isLoading = false, isNoInternetConnectivity = true
+                                is ServerError -> {
+                                    isAllPagesLoaded = true
+                                    render(
+                                        state.value.copy(isLoading = false)
                                     )
-                                )
+                                }
                             }
                         }
                     }

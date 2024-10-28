@@ -4,7 +4,7 @@ import com.helpers.network.ApiResponse
 import com.ricknmorty.data.domain.apis.ICharactersApi
 import com.ricknmorty.data.domain.repos.ICharactersRepository
 import com.ricknmorty.data.responses.Character
-import com.ricknmorty.data.responses.CharacterDto
+import com.ricknmorty.data.responses.CharactersPageDto
 import javax.inject.Inject
 
 /**
@@ -14,7 +14,7 @@ import javax.inject.Inject
 class CharactersRepository @Inject constructor(private val charactersApi: ICharactersApi) :
     ICharactersRepository {
 
-    override suspend fun getCharacters(page: Int): ApiResponse<CharacterDto> {
+    override suspend fun getCharacters(page: Int): ApiResponse<CharactersPageDto> {
         return charactersApi.getCharactersFor(page = page)
     }
 

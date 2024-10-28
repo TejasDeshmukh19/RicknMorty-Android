@@ -1,9 +1,9 @@
 package com.ricknmorty.characters.data.usecases_impl
 
-import com.helpers.network.ApiResponse
+import com.helpers.network.Loading
 import com.ricknmorty.data.domain.repos.ICharactersRepository
 import com.ricknmorty.data.domain.usecases.characters.IGetAllCharactersUseCase
-import com.ricknmorty.data.responses.CharacterDto
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 /**
@@ -14,7 +14,8 @@ class GetAllCharactersUseCaseImpl @Inject constructor(
     private val charactersRepository: ICharactersRepository
 ) : IGetAllCharactersUseCase {
 
-    override suspend fun invoke(page: Int): ApiResponse<CharacterDto> {
-        return charactersRepository.getCharacters(page)
+    override suspend fun invoke(page: Int) = flow {
+        emit(Loading(isLoading = true))
+        emit(charactersRepository.getCharacters(page))
     }
 }

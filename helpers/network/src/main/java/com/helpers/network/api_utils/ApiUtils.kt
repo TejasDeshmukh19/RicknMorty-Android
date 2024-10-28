@@ -44,12 +44,12 @@ object ApiUtils {
         return exception is NetworkInterceptor.NoNetworkException || exception is UnknownHostException
     }
 
-    fun <T> ApiError<T>.parseApiError(): String? {
+    fun <T> ApiError<T>.parseApiError(): String {
         return try {
             val errorJson = JSONObject(message)
             errorJson.optString(KEY_ERROR)
         } catch (e: Exception) {
-            null
+            "Failed, Please try again later."
         }
     }
 }
